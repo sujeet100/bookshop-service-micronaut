@@ -1,0 +1,84 @@
+
+plugins {
+    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("io.micronaut.application") version "1.5.0"
+    id 'nu.studer.jooq' version '5.2.1'
+}
+
+version = "0.1"
+group = "bookshop.service"
+
+repositories {
+    mavenCentral()
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("bookshop.service.*")
+    }
+}
+
+
+dependencies {
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut.sql:micronaut-jooq")
+    implementation("io.micronaut.flyway:micronaut-flyway")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("io.micronaut.sql:micronaut-jdbc-hikari")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("io.micronaut.sql:micronaut-jooq")
+    testRuntimeOnly("com.h2database:h2")
+    jooqGenerator 'org.postgresql:postgresql:42.2.14'
+}
+
+
+application {
+    mainClass.set("bookshop.service.Application")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("1.15")
+    targetCompatibility = JavaVersion.toVersion("1.15")
+}
+
+jooq {
+
+    configurations {
+        main {
+            generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:5432/bookshop-db'
+                    user = 'postgres'
+                    password = 'postgres'
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'com.tw.bootcamp.bookshop.entity'
+                    }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                }
+            }
+        }
+    }
+
+}

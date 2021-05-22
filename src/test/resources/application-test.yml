@@ -1,0 +1,14 @@
+
+micronaut:
+  application:
+    name: bookshopService
+datasources:
+  default:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;CASE_INSENSITIVE_IDENTIFIERS=true;DATABASE_TO_LOWER=true;
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+flyway:
+  datasources:
+    default:
+      enabled: true
